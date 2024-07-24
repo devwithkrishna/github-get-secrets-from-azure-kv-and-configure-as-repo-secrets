@@ -16,7 +16,7 @@ def list_repos(search_string: str):
 
 	headers = {
 		"Accept": "application/vnd.github+json",
-		"Authorization": f"Bearer {os.getenv('GH_TOKEN')}",
+		"Authorization": f"Bearer {os.getenv('GH_APP_TOKEN')}",
 		"X-GitHub-Api-Version": "2022-11-28"
 	}
 

@@ -27,7 +27,7 @@ def get_repository_public_key(organization: str, repository_name: str):
 	repository_public_key_url = f'https://api.github.com/repos/{organization}/{repository_name}/actions/secrets/public-key'
 	headers = {
 		"Accept": "application/vnd.github+json",
-		"Authorization": f"Bearer {os.getenv('GH_TOKEN')}",
+		"Authorization": f"Bearer {os.getenv('GH_APP_TOKEN')}",
 		"X-GitHub-Api-Version": "2022-11-28"
 	}
 	response = requests.get(repository_public_key_url, headers=headers)
@@ -56,7 +56,7 @@ def get_repository_public_key_id(organization: str, repository_name: str):
 	repository_public_key_id_url = f'https://api.github.com/repos/{organization}/{repository_name}/actions/secrets/public-key'
 	headers = {
 		"Accept": "application/vnd.github+json",
-		"Authorization": f"Bearer {os.getenv('GH_TOKEN')}",
+		"Authorization": f"Bearer {os.getenv('GH_APP_TOKEN')}",
 		"X-GitHub-Api-Version": "2022-11-28"
 	}
 	response = requests.get(repository_public_key_id_url, headers=headers)
