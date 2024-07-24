@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "github-get-secrets-from-azure-kv-and-configure-as-repo-secrets"
+version = "0.1.0"
+description = "Fetch Specific Secrets from Azure key vault and configure as repo secrets"
+authors = ["githubofkrishnadhas <krishnadhasnk1997@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+azure-identity = "^1.17.1"
+azure-keyvault-secrets = "^4.8.0"
+argparse = "^1.4.0"
+python-dotenv = "^1.0.1"
+azure-mgmt-resourcegraph = "^8.0.0"
+pynacl = "^1.5.0"
+requests = "^2.32.3"
+pytz = "^2024.1"
+azure-mgmt-keyvault = "^10.3.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
