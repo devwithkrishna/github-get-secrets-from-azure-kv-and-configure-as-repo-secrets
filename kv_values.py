@@ -1,14 +1,17 @@
 import argparse
 import os
+
 import requests
-from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 from azure.mgmt.keyvault import KeyVaultManagementClient
 from azure.mgmt.keyvault.models import VaultAccessPolicyParameters, AccessPolicyEntry, Permissions, SecretPermissions
-from  resource_graph_query import run_azure_rg_query_to_get_keyvault_rg_name, run_azure_rg_query_to_get_tenant_id
+from dotenv import load_dotenv
 
-def get_keyvault_rg(keyvault_name:str):
+from resource_graph_query import run_azure_rg_query_to_get_keyvault_rg_name, run_azure_rg_query_to_get_tenant_id
+
+
+def get_keyvault_rg(keyvault_name: str):
 	"""
 	get kv rg name from resource graph query
 	:param keyvault_name:
@@ -21,7 +24,8 @@ def get_keyvault_rg(keyvault_name:str):
 			print(f"KeyVault resource group is {rg}")
 	return rg
 
-def get_keyvault_subscription_id(keyvault_name:str):
+
+def get_keyvault_subscription_id(keyvault_name: str):
 	"""
 	get kv sub id from resource graph query
 	:param keyvault_name:
@@ -33,6 +37,7 @@ def get_keyvault_subscription_id(keyvault_name:str):
 			subscription_id = kv['subscriptionId']
 			print(f"KeyVault subscription id is {subscription_id}")
 	return subscription_id
+
 
 def get_obj_id_of_authenticated_user():
 	"""
@@ -67,6 +72,7 @@ def get_obj_id_of_authenticated_user():
 		print(f"Failed to retrieve user information: {response.status_code} {response.text}")
 	return object_id
 
+
 def add_to_access_policies_in_kv(keyvault_name: str):
 	"""
 	add the user / app into keyvault with secret get list set permissions
@@ -80,7 +86,7 @@ def add_to_access_policies_in_kv(keyvault_name: str):
 	key_vault_url = keyvault_url_from_kv_name(keyvault_name=keyvault_name)
 	rg = get_keyvault_rg(keyvault_name=keyvault_name)
 	subscription_id = get_keyvault_subscription_id(keyvault_name=keyvault_name)
-	client = KeyVaultManagementClient(vault_url=key_vault_url,subscription_id=subscription_id, credential=credential)
+	client = KeyVaultManagementClient(vault_url=key_vault_url, subscription_id=subscription_id, credential=credential)
 
 	# key vault access policy - secret get list permission
 	permissions = Permissions(secrets=[SecretPermissions.get, SecretPermissions.list, SecretPermissions.set])
@@ -98,18 +104,20 @@ def add_to_access_policies_in_kv(keyvault_name: str):
 	)
 
 	# Add the access policy
-	result = client.vaults.update_access_policy(vault_name=keyvault_name, operation_kind="add", resource_group_name=rg , parameters=parameters)
+	result = client.vaults.update_access_policy(vault_name=keyvault_name, operation_kind="add", resource_group_name=rg,
+												parameters=parameters)
 	print(f'Added {object_id} to {keyvault_name} Access policy')
 
 
 def keyvault_url_from_kv_name(keyvault_name: str):
-    """
-    creating keyvault url from keyvault name
-    :return:
-    """
-    keyvault_url = f"https://{keyvault_name.lower ()}.vault.azure.net"
-    print (f"Key vault url is : , {keyvault_url}")
-    return keyvault_url
+	"""
+	creating keyvault url from keyvault name
+	:return:
+	"""
+	keyvault_url = f"https://{keyvault_name.lower()}.vault.azure.net"
+	# print(f"Key vault url is : , {keyvault_url}")
+	return keyvault_url
+
 
 def get_secret_values_from_kv(keyvault_name: str):
 	"""
@@ -128,7 +136,7 @@ def get_secret_values_from_kv(keyvault_name: str):
 		print(f"Operation being performed is : Get on {keyvault_name}")
 		get_secret = client.get_secret(secret)
 		# print(f"secret value for {secret} is : {get_secret.value}")
-		kv_secret_values[secret.replace('-','_')] = get_secret.value
+		kv_secret_values[secret.replace('-', '_')] = get_secret.value
 	subscription_id = get_keyvault_subscription_id(keyvault_name=keyvault_name)
 	tenant_id = run_azure_rg_query_to_get_tenant_id()
 	kv_secret_values['ARM_TENANT_ID'] = tenant_id
@@ -151,7 +159,9 @@ def main():
 
 	# obj_id = get_obj_id_of_authenticated_user()
 	get_secret_values_from_kv(keyvault_name=keyvault_name)
-	# add_to_access_policies_in_kv(keyvault_name=keyvault_name)
-	# get_keyvault_rg(keyvault_name=keyvault_name)
+
+
+# add_to_access_policies_in_kv(keyvault_name=keyvault_name)
+# get_keyvault_rg(keyvault_name=keyvault_name)
 if __name__ == "__main__":
 	main()
